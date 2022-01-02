@@ -1,16 +1,18 @@
 const express = require('express');
-const {dbConnection} = require('./database/config.js');
 require('dotenv').config()
+const {dbConnection} = require('./database/config.js');
 const cors = require('cors')
 const app = express();
 dbConnection();
-app.use(cors())
-const port = 3000;
+app.use(cors());
+//Lectura y parseo del body
+app.use(express.json());
 
+app.use('/api/v1/user', require('./routers/users'));
 app.get('/', (req, res) => {
-    res.send('hola mundo desde un contenedor ff hhh y');
+    res.send('WELCOME API V1');
 });
 
 app.listen(process.env.APP_PORT, () => {
-    console.log('app funcionando en el puerto 3000');
+    console.log('app funcionando en el puerto : ' + process.env.APP_PORT);
 });

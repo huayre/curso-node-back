@@ -6,10 +6,10 @@ const dbConnection = async () => {
         console.log('successful db')
     } catch (error) {
         //handleError(error);
-        console.log('error')
+        console.log('error :/' + error)
     }
 }
 
 module.exports = {
-    dbConnection : dbConnection
+    dbConnection: dbConnection
 }
