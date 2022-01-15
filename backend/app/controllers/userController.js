@@ -1,4 +1,3 @@
-const User = require('../models/user');
 const userService = require('../services/userService');
 const {response} = require('express')
 
@@ -6,7 +5,8 @@ const index = async (req, res) => {
     const listUser = await userService.listUser();
     res.json({
         ok: true,
-        data: listUser
+        data: listUser,
+        id_user_request : req.request_user
     });
 }
 const store = async (req, res = response) => {
@@ -23,8 +23,16 @@ const update = async  (req, res = response) => {
         message: response.message
     });
 }
+const destroy = async (req, res = response) => {
+    const response = await userService.deleteUser(req.params.id);
+    res.status(response.status).json({
+        ok: response.ok,
+        message: response.message
+    });
+}
 module.exports = {
     index: index,
     store: store,
-    update :update
+    update: update,
+    destroy: destroy
 }

@@ -9,6 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/v1/user', require('./routers/users'));
+app.use('/api/v1/auth', require('./routers/auth'));
 app.get('/', (req, res) => {
     res.send('WELCOME API V1');
 });

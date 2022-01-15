@@ -1,9 +1,10 @@
 const {Router} = require("express");
-const {check} = require('express-validator')
-const router = Router();
-const {index, store, update} = require('../app/controllers/userController');
+const {check} = require('express-validator');
 const {validate} = require('../app/middlewares/validateMiddleware');
-router.get('/', index);
+const {index, store, update, destroy} = require('../app/controllers/userController');
+const {validateToken} = require('../app/middlewares/validatejwtMiddleware')
+const router = Router();
+router.get('/', [validateToken], index);
 router.post('/',
     [
         check('name',).notEmpty().withMessage('name is required'),
@@ -19,6 +20,6 @@ router.put('/:id',
         validate
     ],
     update
-    );
-
+);
+router.delete('/:id', destroy);
 module.exports = router;
