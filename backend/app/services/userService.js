@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const bcrypt = require('bcrypt')
 
 async function listUser() {
     const listUsers = await User.find({});
@@ -6,30 +7,50 @@ async function listUser() {
 }
 
 async function createUser(request) {
-    const response = {};
     try {
-        const {email, password, name} = request;
-        const existEmail = await User.findOne({email});
+        let datanewUser = request;
+        const existEmail = await User.findOne({email: datanewUser.email});
         if (existEmail) {
-            response.status = 400;
-            response.ok = false;
-            response.message = 'email already exists';
+            return {status: 400, ok: false, message: 'email already exists'};
         } else {
-            const newUser = new User(request);
-            await newUser.save();
-            response.status = 400;
-            response.ok = false;
-            response.message = newUser;
+            const encryptedPassword = bcrypt.hashSync(datanewUser.password, 10);
+            datanewUser.password = encryptedPassword;
+            const newUser = await User.create(datanewUser);
+            const { password, ...response } = newUser._doc;
+            return {status: 200, ok: true, message: response};
         }
     } catch (e) {
-        response.status = 500;
-        response.ok = false;
-        response.message = e.toString();
+        return {status: 500, ok: false, message: e.toString()};
     }
-    return response;
+}
+
+async function updateUser(id, request) {
+    try {
+
+        const {email, ...dataUser} = request;
+        const findUserUpdate = await User.findById(id);
+        if (!findUserUpdate) {
+            return {status: 404, ok: false, message: 'user not found'};
+        }
+        if (findUserUpdate.email !== email) {
+            const existEmail = await User.findOne({email});
+            if (existEmail) {
+                return {status: 400, ok: false, message: 'email already exists'};
+            }
+        }
+        dataUser.email = email;
+        const encryptedPassword = bcrypt.hashSync(dataUser.password, 10);
+        dataUser.password = encryptedPassword;
+        const userUpdated = await User.findByIdAndUpdate(id, dataUser, {new: true});
+        return {status: 200, ok: true, message: userUpdated};
+
+    } catch (e) {
+        return {status: 500, ok: false, message: e.toString()};
+    }
 }
 
 module.exports = {
     createUser: createUser,
-    listUser: listUser
+    listUser: listUser,
+    updateUser: updateUser
 }

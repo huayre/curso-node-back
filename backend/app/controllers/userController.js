@@ -16,7 +16,15 @@ const store = async (req, res = response) => {
         message: response.message
     });
 }
+const update = async  (req, res = response) => {
+    const response = await userService.updateUser(req.params.id, req.body);
+    res.status(response.status).json({
+        ok: response.ok,
+        message: response.message
+    });
+}
 module.exports = {
     index: index,
-    store: store
+    store: store,
+    update :update
 }
