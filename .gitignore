@@ -2,3 +2,4 @@
 /.idea
 /database
 /backend/.env
+/backend/public/image

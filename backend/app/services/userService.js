@@ -3,7 +3,9 @@ const bcrypt = require('bcrypt')
 const jwt = require("../helpers/jwt");
 
 async function listUser() {
-    const listUsers = await User.find({});
+    const query = {};
+    query.where('name', 'prueba');
+    const listUsers = await User.paginate(query, {select: 'name'});
     return listUsers;
 }
 
